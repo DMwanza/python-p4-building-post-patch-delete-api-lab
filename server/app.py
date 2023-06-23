@@ -65,6 +65,37 @@ def most_expensive_baked_good():
         200
     )
     return response
+@app.route('/baked_goods',methods=['POST'])
+def baked_good():
+    new_baked_good=BakedGood{
+        name=request.form.get('name'),
+        price=request.form.get('price'),
+        bakery_id=request.form.get('bakery_id')
+    }
+    db.session.add(new_baked_good)
+    db.session.commit()
+
+    new_dict=new_baked_good.dict()
+    response=make_response(
+        jsonify(new_dict),
+        201
+    )
+    return response
+@app.route('/bakeries/<int:id>',methods=['PATCH'])
+def bakeriess_by_id(id):
+    bakery=Bakery.query.filter_by(id=id).first()
+
+    for attr in request.form:
+        setattr(bakery,attr,request.form.get(attr))
+    db.session.add(bakery)
+    db.session.commit()
+
+    bake_dict=bakery.to_dict()
+    response=make_response(
+        jsonify(bake_dict),
+        200
+    )
+    return response
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
